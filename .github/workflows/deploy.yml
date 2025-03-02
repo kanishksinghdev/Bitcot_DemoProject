@@ -28,8 +28,19 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
+          AWS_REGION: "ap-south-1"  # Change to your AWS region
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           npm install -g serverless
+          echo "service: my-serverless-app" > serverless.yml
+          echo "provider:" >> serverless.yml
+          echo "  name: aws" >> serverless.yml
+          echo "  runtime: nodejs18.x" >> serverless.yml
+          echo "functions:" >> serverless.yml
+          echo "  hello:" >> serverless.yml
+          echo "    handler: handler.hello" >> serverless.yml
           serverless deploy
 
