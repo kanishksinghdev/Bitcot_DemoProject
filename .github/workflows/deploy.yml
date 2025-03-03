@@ -16,7 +16,7 @@ jobs:
       - name: Set up Serverless
         uses: serverless/github-action@v3
         with:
-           access-key-id: $01 secrets.SERVERLESS_ACCESS_KEY }}
+           access-key-id: ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
       - name: Install Node.js
         uses: actions/setup-node@v3
