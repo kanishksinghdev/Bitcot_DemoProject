@@ -18,8 +18,9 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Serverless CLI
-        run: npm install -g serverless
+      - name: Install Serverless CLI (v3)
+        run: npm install -g serverless@3
+
 
       # ✅ Configure AWS Credentials for Deployment
       - name: Configure AWS Credentials
