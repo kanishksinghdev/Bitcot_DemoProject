@@ -23,12 +23,13 @@ jobs:
         with:
           node-version: 18
 
-      # ✅ Install Serverless CLI & Authenticate
+      # ✅ Install Serverless CLI
       - name: Install Serverless CLI
         run: npm install -g serverless
 
+      # ✅ Authenticate with Serverless using Access Key
       - name: Authenticate with Serverless
-        run: npx serverless login --org my-org --app my-app
+        run: npx serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # ✅ Install Dependencies
       - name: Clean & Install Dependencies
@@ -43,11 +44,8 @@ jobs:
       # ✅ Deploy to AWS Lambda
       - name: Deploy to AWS Lambda
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_REGION: "ap-south-1"  # Change to your AWS region
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
         run: npx serverless deploy
