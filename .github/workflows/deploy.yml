@@ -13,32 +13,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Check Node.js Version
-        run: node -v  # Logs the Node.js version
+      - name: Set up Serverless
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy
+        env:   
+          SERVERLESS_ACCESS_KEY : ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
-      - name: Set Up Node.js 18
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Reinstall Serverless CLI
-        run: |
-          npm uninstall -g serverless || true
-          npm install -g serverless
-          serverless -v  # Logs the Serverless version
-
-      - name: Authenticate with Serverless
-        uses: serverless/github-action@v3
-        with:
-          serverless-access-key: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-
-      - name: Clean & Install Dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
+      - name: Install Dependencies
+        run: npm install
 
       - name: Run Tests
-        run: npm test || echo "No tests found, skipping"
+        run: npm test  # Ensure you have tests configured
 
       - name: Deploy to AWS Lambda
         env:
@@ -49,7 +40,16 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
-        run: npx serverless deploy
+        run: |
+          npm install -g serverless
+          echo "service: my-serverless-app" > serverless.yml
+          echo "provider:" >> serverless.yml
+          echo "  name: aws" >> serverless.yml
+          echo "  runtime: nodejs18.x" >> serverless.yml
+          echo "functions:" >> serverless.yml
+          echo "  hello:" >> serverless.yml
+          echo "    handler: handler.hello" >> serverless.yml
+          serverless deploy
 
 
 
