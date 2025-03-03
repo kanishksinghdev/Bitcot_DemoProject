@@ -21,9 +21,12 @@ jobs:
       - name: Install Serverless CLI
         run: npm install -g serverless
 
-      # ✅ Authenticate with Serverless Framework using Access Key
-      - name: Authenticate with Serverless
-        run: echo "SERVERLESS_ACCESS_KEY=${{ secrets.SERVERLESS_ACCESS_KEY }}" >> $GITHUB_ENV
+      # ✅ Configure AWS Credentials for Deployment
+      - name: Configure AWS Credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_REGION=us-east-1" >> $GITHUB_ENV  # Change region if needed
 
       - name: Install Dependencies
         run: npm install
@@ -31,11 +34,10 @@ jobs:
       - name: Run Tests
         run: npm test || echo "No tests found, skipping"
 
-      # ✅ Deploy using Serverless Framework
+      # ✅ Deploy using Serverless Framework with AWS credentials
       - name: Deploy to AWS Lambda
         env:
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-south-1"
-        run: npx serverless deploy
+          AWS_REGION: "us-east-1"
+        run: npx serverless deploy --aws-profile default --debug
